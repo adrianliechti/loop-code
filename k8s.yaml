@@ -1,3 +1,25 @@
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: code
+  labels:
+    app: code
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: code
+  labels:
+    app: code
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: cluster-admin
+subjects:
+  - kind: ServiceAccount
+    name: code
+    namespace: default
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -13,9 +35,11 @@ spec:
       labels:
         app: code
     spec:
+      serviceAccountName: code
       containers:
         - name: code
           image: adrianliechti/loop-code
+          imagePullPolicy: Always
           securityContext:
             runAsUser: 1000
           env:
@@ -33,6 +57,7 @@ spec:
           securityContext:
             privileged: true
           image: "docker:20-dind"
+          imagePullPolicy: Always
           args:
             - "--group"
             - "1000"

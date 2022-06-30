@@ -31,6 +31,17 @@ RUN mkdir -p /workspace && \
 ENV DOCKER_VERSION="20.10.16"
 RUN curl -fsSL "https://download.docker.com/linux/static/stable/$(uname -m)/docker-${DOCKER_VERSION}.tgz" | tar -zxf - --strip=1 -C /usr/local/bin/ docker/docker
 
+# Kubenetes CLI
+ENV KUBERNETES_VERSION="1.24.2"
+RUN arch=$(uname -m) && \
+    if [ "${arch}" = "x86_64" ]; then \
+    arch="amd64"; \
+    elif [ "${arch}" = "aarch64" ]; then \
+    arch="arm64"; \
+    fi && \
+    curl -Lo /usr/local/bin/kubectl https://dl.k8s.io/release/v${KUBERNETES_VERSION}/bin/linux/${arch}/kubectl && \
+    chmod +x /usr/local/bin/kubectl
+
 USER 1000
 
 ENV PATH /opt/code/bin:$PATH

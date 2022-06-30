@@ -1,0 +1,93 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: code
+  labels:
+    app: code
+spec:
+  selector:
+    matchLabels:
+      app: code
+  template:
+    metadata:
+      labels:
+        app: code
+    spec:
+      containers:
+        - name: code
+          image: adrianliechti/loop-code
+          securityContext:
+            runAsUser: 1000
+          env:
+            - name: DOCKER_HOST
+              value: "unix:///var/run/dind/docker.sock"
+          ports:
+            - containerPort: 3000
+          volumeMounts:
+            - name: data
+              mountPath: /workspace
+            - name: dind
+              mountPath: /var/run/dind
+          resources: {}
+        - name: docker
+          securityContext:
+            privileged: true
+          image: "docker:20-dind"
+          args:
+            - "--group"
+            - "1000"
+            - "--host"
+            - "unix:///var/run/dind/docker.sock"
+            - "--mtu"
+            - "1440"
+          ports:
+            - name: docker
+              containerPort: 2376
+              protocol: TCP
+          volumeMounts:
+            - name: data
+              mountPath: /workspace
+            - name: dind
+              mountPath: /var/run/dind
+          resources: {}
+      initContainers:
+        - name: init-workspace
+          image: busybox:stable
+          command: ["chown", "1000:1000", "/workspace"]
+          volumeMounts:
+            - name: data
+              mountPath: /workspace
+      volumes:
+        - name: data
+          persistentVolumeClaim:
+            claimName: code
+        - name: dind
+          emptyDir: {}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: code
+  labels:
+    app: code
+spec:
+  type: ClusterIP
+  selector:
+    app: code
+  ports:
+    - name: http
+      port: 80
+      targetPort: 3000
+---
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: code
+  labels:
+    app: code
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 8Gi

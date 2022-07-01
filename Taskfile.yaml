@@ -7,17 +7,26 @@ vars:
 
 tasks:
   push:
-    cmds:
-      - task: push-base
-      - task: push-dind
-
-  push-base:
+    run: once
     cmds:
       - docker buildx build --push --platform linux/arm64,linux/amd64 --tag {{.DOCKER_IMAGE}} .
 
-  push-dind:
+  push-stacks:
     cmds:
-      - docker buildx build --push --platform linux/arm64,linux/amd64 --tag {{.DOCKER_IMAGE}}:dind dind -f dind/Dockerfile
+      - task: push-stack
+        vars: { STACK: "dind" }
+      - task: push-stack
+        vars: { STACK: "golang" }
+
+  run-stack:
+    cmds:
+      - docker run -i --rm --pull=always -p 3000:3000 {{.DOCKER_IMAGE}}:{{.STACK}}
+
+  push-stack:
+    deps:
+      - push
+    cmds:
+      - docker buildx build --push --platform linux/arm64,linux/amd64 --tag {{.DOCKER_IMAGE}}:{{.STACK}} stacks/{{.STACK}}/ -f stacks/{{.STACK}}/Dockerfile
 
   install:
     cmds:

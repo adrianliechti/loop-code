@@ -2,8 +2,13 @@ FROM ubuntu:22.04
 
 ARG VERSION=v1.68.1
 
-RUN apt update && \
-    apt install -y git curl wget && \
+RUN apt update && apt-get install -y --no-install-recommends \
+    ca-certificates \
+    curl \
+    git \
+    netbase \
+    sudo \
+    wget && \
     rm -rf /var/lib/apt/lists/*
 
 RUN mkdir -p /opt/code && \
@@ -12,17 +17,17 @@ RUN mkdir -p /opt/code && \
     arch="x64"; \
     elif [ "${arch}" = "aarch64" ]; then \
     arch="arm64"; \
-    elif [ "${arch}" = "armv7l" ]; then \
-    arch="armhf"; \
     fi && \
-    wget https://github.com/gitpod-io/openvscode-server/releases/download/openvscode-server-${VERSION}/openvscode-server-${VERSION}-linux-${arch}.tar.gz && \
+    wget -q https://github.com/gitpod-io/openvscode-server/releases/download/openvscode-server-${VERSION}/openvscode-server-${VERSION}-linux-${arch}.tar.gz && \
     tar -xzf openvscode-server-${VERSION}-linux-${arch}.tar.gz -C /opt/code --strip 1 && \
     cp /opt/code/bin/remote-cli/openvscode-server /opt/code/bin/remote-cli/code && \
     chown -R root:root /opt/code && \
     rm -f openvscode-server-${VERSION}-linux-${arch}.tar.gz
 
-RUN groupadd -g 1000 code \
-    && useradd -u 1000 -g 1000 -m -s /bin/bash code
+RUN groupadd -g 1000 code && \
+    useradd -u 1000 -g 1000 -m -s /bin/bash code && \
+    echo code ALL=\(root\) NOPASSWD:ALL > /etc/sudoers.d/code && \
+    chmod 0440 /etc/sudoers.d/code
 
 RUN mkdir -p /workspace && \
     chown -R code:code /workspace
@@ -32,15 +37,25 @@ ENV DOCKER_VERSION="20.10.16"
 RUN curl -fsSL "https://download.docker.com/linux/static/stable/$(uname -m)/docker-${DOCKER_VERSION}.tgz" | tar -zxf - --strip=1 -C /usr/local/bin/ docker/docker
 
 # Kubenetes CLI
-ENV KUBERNETES_VERSION="1.24.2"
+ENV KUBECTL_VERSION="1.24.2"
 RUN arch=$(uname -m) && \
     if [ "${arch}" = "x86_64" ]; then \
     arch="amd64"; \
     elif [ "${arch}" = "aarch64" ]; then \
     arch="arm64"; \
     fi && \
-    curl -Lo /usr/local/bin/kubectl https://dl.k8s.io/release/v${KUBERNETES_VERSION}/bin/linux/${arch}/kubectl && \
+    curl -fsSL https://dl.k8s.io/release/v${KUBECTL_VERSION}/bin/linux/${arch}/kubectl -o /usr/local/bin/kubectl && \
     chmod +x /usr/local/bin/kubectl
+
+# Helm CLI
+ENV HELM_VERSION="3.9.0"
+RUN arch=$(uname -m) && \
+    if [ "${arch}" = "x86_64" ]; then \
+    arch="amd64"; \
+    elif [ "${arch}" = "aarch64" ]; then \
+    arch="arm64"; \
+    fi && \
+    curl -fsSL https://get.helm.sh/helm-v${HELM_VERSION}-linux-${arch}.tar.gz | tar -zxf - --strip=1 -C /usr/local/bin/ linux-${arch}/helm
 
 USER 1000
 
@@ -56,5 +71,11 @@ ENV LANG=C.UTF-8 \
     GIT_EDITOR="code --wait"
 
 EXPOSE 3000
+
+RUN /opt/code/bin/openvscode-server --install-extension ms-azuretools.vscode-docker && \
+    /opt/code/bin/openvscode-server --install-extension ms-kubernetes-tools.vscode-kubernetes-tools && \
+    /opt/code/bin/openvscode-server --install-extension redhat.vscode-xml && \
+    /opt/code/bin/openvscode-server --install-extension redhat.vscode-yaml && \
+    /opt/code/bin/openvscode-server --install-extension vscode-icons-team.vscode-icons
 
 CMD [ "/bin/sh", "-c", "exec /opt/code/bin/openvscode-server --host 0.0.0.0 --without-connection-token" ]

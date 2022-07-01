@@ -17,6 +17,8 @@ tasks:
         vars: { STACK: "dind" }
       - task: push-stack
         vars: { STACK: "golang" }
+      - task: push-stack
+        vars: { STACK: "java" }
 
   run-stack:
     cmds:

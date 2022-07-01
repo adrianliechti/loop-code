@@ -21,7 +21,7 @@ RUN arch=$(uname -m) && \
     fi && \
     curl -fsSL https://dl.google.com/go/go$GOVERSION.linux-${arch}.tar.gz | tar -C /usr/local -xzf -
 
-ENV PATH=$PATH:/usr/local/go/bin
+ENV PATH=$PATH:/usr/local/go/bin:$HOME/go/bin
 
 USER 1000
 

@@ -24,14 +24,14 @@ Base Images
 
 ```shell
 # run golang stack
-docker run -it --name code -v $(pwd):/src -p 3000:3000 adrianliechti/loop-code:golang
+docker run --name code -v $(pwd):/src -p 3000:3000 adrianliechti/loop-code:golang
 ```
 
 With Docker Support
 
 ```shell
 # run golang stack with docker-in-docker support
-docker run -it --name code --privileged -v $(pwd):/src -p 3000:3000 adrianliechti/loop-code:golang-dind
+docker run --name code --privileged -v $(pwd):/src -p 3000:3000 adrianliechti/loop-code:golang-dind
 ```
 
 Open [http://localhost:3000/?folder=/src](http://localhost:3000/?folder=/src) in your Web Browser

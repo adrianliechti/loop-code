@@ -10,11 +10,10 @@ tasks:
     run: once
     cmds:
       - docker buildx build --push --platform linux/arm64,linux/amd64 --tag {{.DOCKER_IMAGE}} .
+      - docker buildx build --push --platform linux/arm64,linux/amd64 --tag {{.DOCKER_IMAGE}}:dind stacks/dind/ -f stacks/dind/Dockerfile
 
   push-stacks:
     cmds:
-      - task: push-stack
-        vars: { STACK: "dind" }
       - task: push-stack
         vars: { STACK: "dotnet" }
       - task: push-stack
@@ -31,6 +30,7 @@ tasks:
       - push
     cmds:
       - docker buildx build --push --platform linux/arm64,linux/amd64 --tag {{.DOCKER_IMAGE}}:{{.STACK}} stacks/{{.STACK}}/ -f stacks/{{.STACK}}/Dockerfile
+      - docker buildx build --push --platform linux/arm64,linux/amd64 --tag {{.DOCKER_IMAGE}}:{{.STACK}}-dind stacks/{{.STACK}}/ -f stacks/{{.STACK}}/Dockerfile --build-arg CODE_IMAGE=adrianliechti/loop-code:dind
 
   install:
     cmds:

@@ -1,4 +1,5 @@
-FROM adrianliechti/loop-code
+ARG CODE_IMAGE=adrianliechti/loop-code
+FROM ${CODE_IMAGE}
 
 USER root
 

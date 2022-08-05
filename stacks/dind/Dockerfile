@@ -7,7 +7,10 @@ RUN apt-get update -qq && apt-get install -qq -y --no-install-recommends \
     uidmap \
     iptables \
     nftables \
+    pigz \
     xz-utils \
+    e2fsprogs \
+    xfsprogs \
     cgroupfs-mount \
     dbus-user-session \
     rootlesskit \

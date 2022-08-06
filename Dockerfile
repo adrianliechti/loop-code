@@ -47,17 +47,6 @@ RUN arch=$(uname -m) && \
     curl -fsSL https://dl.k8s.io/release/v${KUBECTL_VERSION}/bin/linux/${arch}/kubectl -o /usr/local/bin/kubectl && \
     chmod +x /usr/local/bin/kubectl
 
-# KinD CLI
-ENV KIND_VERSION="0.14.0"
-RUN arch=$(uname -m) && \
-    if [ "${arch}" = "x86_64" ]; then \
-    arch="amd64"; \
-    elif [ "${arch}" = "aarch64" ]; then \
-    arch="arm64"; \
-    fi && \
-    curl -fsSL https://github.com/kubernetes-sigs/kind/releases/download/v${KIND_VERSION}/kind-linux-${arch} -o /usr/local/bin/kind && \
-    chmod +x /usr/local/bin/kind
-
 # Helm CLI
 ENV HELM_VERSION="3.9.2"
 RUN arch=$(uname -m) && \

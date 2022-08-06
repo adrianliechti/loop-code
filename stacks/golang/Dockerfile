@@ -11,7 +11,7 @@ RUN apt update && apt-get install -y --no-install-recommends \
     pkg-config && \
     rm -rf /var/lib/apt/lists/*
 
-ENV GOVERSION=1.18.3
+ENV GO_VERSION=1.19
 ENV GOPATH=$HOME/go
 
 RUN arch=$(uname -m) && \
@@ -20,7 +20,7 @@ RUN arch=$(uname -m) && \
     elif [ "${arch}" = "aarch64" ]; then \
     arch="arm64"; \
     fi && \
-    curl -fsSL https://dl.google.com/go/go$GOVERSION.linux-${arch}.tar.gz | tar -C /usr/local -xzf -
+    curl -fsSL https://dl.google.com/go/go$GO_VERSION.linux-${arch}.tar.gz | tar -C /usr/local -xzf -
 
 ENV PATH=$PATH:/usr/local/go/bin:$HOME/go/bin
 

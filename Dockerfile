@@ -1,6 +1,6 @@
 FROM ubuntu:22.04
 
-ARG VERSION=v1.68.1
+ARG VERSION=v1.70.0
 
 RUN apt update && apt-get install -y --no-install-recommends \
     ca-certificates \
@@ -33,11 +33,11 @@ RUN mkdir -p /workspace && \
     chown -R code:code /workspace
 
 # Docker CLI
-ENV DOCKER_VERSION="20.10.16"
+ENV DOCKER_VERSION="20.10.17"
 RUN curl -fsSL "https://download.docker.com/linux/static/stable/$(uname -m)/docker-${DOCKER_VERSION}.tgz" | tar -zxf - --strip=1 -C /usr/local/bin/ docker/docker
 
 # Kubenetes CLI
-ENV KUBECTL_VERSION="1.24.2"
+ENV KUBECTL_VERSION="1.24.3"
 RUN arch=$(uname -m) && \
     if [ "${arch}" = "x86_64" ]; then \
     arch="amd64"; \
@@ -47,8 +47,19 @@ RUN arch=$(uname -m) && \
     curl -fsSL https://dl.k8s.io/release/v${KUBECTL_VERSION}/bin/linux/${arch}/kubectl -o /usr/local/bin/kubectl && \
     chmod +x /usr/local/bin/kubectl
 
+# KinD CLI
+ENV KIND_VERSION="0.14.0"
+RUN arch=$(uname -m) && \
+    if [ "${arch}" = "x86_64" ]; then \
+    arch="amd64"; \
+    elif [ "${arch}" = "aarch64" ]; then \
+    arch="arm64"; \
+    fi && \
+    curl -fsSL https://github.com/kubernetes-sigs/kind/releases/download/v${KIND_VERSION}/kind-linux-${arch} -o /usr/local/bin/kind && \
+    chmod +x /usr/local/bin/kind
+
 # Helm CLI
-ENV HELM_VERSION="3.9.0"
+ENV HELM_VERSION="3.9.2"
 RUN arch=$(uname -m) && \
     if [ "${arch}" = "x86_64" ]; then \
     arch="amd64"; \
@@ -56,6 +67,16 @@ RUN arch=$(uname -m) && \
     arch="arm64"; \
     fi && \
     curl -fsSL https://get.helm.sh/helm-v${HELM_VERSION}-linux-${arch}.tar.gz | tar -zxf - --strip=1 -C /usr/local/bin/ linux-${arch}/helm
+
+# Skaffold CLI
+RUN arch=$(uname -m) && \
+    if [ "${arch}" = "x86_64" ]; then \
+    arch="amd64"; \
+    elif [ "${arch}" = "aarch64" ]; then \
+    arch="arm64"; \
+    fi && \
+    curl -fsSL https://storage.googleapis.com/skaffold/releases/latest/skaffold-linux-${arch} -o /usr/local/bin/skaffold && \
+    chmod +x /usr/local/bin/skaffold
 
 USER 1000
 

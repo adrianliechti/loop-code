@@ -32,6 +32,12 @@ tasks:
       - docker buildx build --push --platform linux/arm64,linux/amd64 --tag {{.DOCKER_IMAGE}}:{{.STACK}} stacks/{{.STACK}}/ -f stacks/{{.STACK}}/Dockerfile
       - docker buildx build --push --platform linux/arm64,linux/amd64 --tag {{.DOCKER_IMAGE}}:{{.STACK}}-dind stacks/{{.STACK}}/ -f stacks/{{.STACK}}/Dockerfile --build-arg CODE_IMAGE=adrianliechti/loop-code:dind
 
+  run:
+    cmds:
+      - docker build --tag {{.DOCKER_IMAGE}} .
+      - docker build --tag {{.DOCKER_IMAGE}}:dind stacks/dind/ -f stacks/dind/Dockerfile
+      - docker run -it --privileged --rm -p 3000:3000 {{.DOCKER_IMAGE}}:dind
+
   install:
     cmds:
       - kubectl create ns loop -o yaml --dry-run=client | kubectl apply -f -

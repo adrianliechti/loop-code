@@ -1,6 +1,6 @@
 FROM ubuntu:22.04
 
-ARG VERSION=v1.70.0
+ARG VERSION=v1.76.2
 
 RUN apt update && apt-get install -y --no-install-recommends \
     ca-certificates \
@@ -33,11 +33,11 @@ RUN mkdir -p /workspace && \
     chown -R code:code /workspace
 
 # Docker CLI
-ENV DOCKER_VERSION="20.10.17"
+ENV DOCKER_VERSION="23.0.2"
 RUN curl -fsSL "https://download.docker.com/linux/static/stable/$(uname -m)/docker-${DOCKER_VERSION}.tgz" | tar -zxf - --strip=1 -C /usr/local/bin/ docker/docker
 
 # Kubenetes CLI
-ENV KUBECTL_VERSION="1.24.3"
+ENV KUBECTL_VERSION="1.26.3"
 RUN arch=$(uname -m) && \
     if [ "${arch}" = "x86_64" ]; then \
     arch="amd64"; \
@@ -48,7 +48,7 @@ RUN arch=$(uname -m) && \
     chmod +x /usr/local/bin/kubectl
 
 # Helm CLI
-ENV HELM_VERSION="3.9.2"
+ENV HELM_VERSION="3.11.2"
 RUN arch=$(uname -m) && \
     if [ "${arch}" = "x86_64" ]; then \
     arch="amd64"; \

@@ -12,5 +12,4 @@ RUN apt update && apt-get install -y --no-install-recommends \
 
 USER 1000
 
-RUN /opt/code/bin/openvscode-server --install-extension vscjava.vscode-java-pack && \
-    /opt/code/bin/openvscode-server --install-extension Pivotal.vscode-boot-dev-pack
+RUN /opt/code/bin/openvscode-server --install-extension vscjava.vscode-java-pack

@@ -1,6 +1,6 @@
 FROM ubuntu:22.04
 
-ARG VERSION=v1.76.2
+ARG VERSION=v1.84.0
 
 RUN apt update && apt-get install -y --no-install-recommends \
     ca-certificates \
@@ -33,11 +33,11 @@ RUN mkdir -p /workspace && \
     chown -R code:code /workspace
 
 # Docker CLI
-ENV DOCKER_VERSION="23.0.2"
+ENV DOCKER_VERSION="24.0.7"
 RUN curl -fsSL "https://download.docker.com/linux/static/stable/$(uname -m)/docker-${DOCKER_VERSION}.tgz" | tar -zxf - --strip=1 -C /usr/local/bin/ docker/docker
 
 # Kubenetes CLI
-ENV KUBECTL_VERSION="1.26.3"
+ENV KUBECTL_VERSION="1.28.4"
 RUN arch=$(uname -m) && \
     if [ "${arch}" = "x86_64" ]; then \
     arch="amd64"; \
@@ -48,7 +48,7 @@ RUN arch=$(uname -m) && \
     chmod +x /usr/local/bin/kubectl
 
 # Helm CLI
-ENV HELM_VERSION="3.11.2"
+ENV HELM_VERSION="3.13.2"
 RUN arch=$(uname -m) && \
     if [ "${arch}" = "x86_64" ]; then \
     arch="amd64"; \
@@ -85,7 +85,6 @@ EXPOSE 3000
 RUN /opt/code/bin/openvscode-server --install-extension ms-azuretools.vscode-docker && \
     /opt/code/bin/openvscode-server --install-extension ms-kubernetes-tools.vscode-kubernetes-tools && \
     /opt/code/bin/openvscode-server --install-extension redhat.vscode-xml && \
-    /opt/code/bin/openvscode-server --install-extension redhat.vscode-yaml && \
-    /opt/code/bin/openvscode-server --install-extension vscode-icons-team.vscode-icons
+    /opt/code/bin/openvscode-server --install-extension redhat.vscode-yaml
 
 CMD [ "/bin/sh", "-c", "exec /opt/code/bin/openvscode-server --host 0.0.0.0 --without-connection-token" ]

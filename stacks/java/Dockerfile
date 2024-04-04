@@ -4,8 +4,8 @@ FROM ${CODE_IMAGE}
 USER root
 
 RUN apt update && apt-get install -y --no-install-recommends \
-    openjdk-17-jdk-headless \
-    openjdk-17-jre-headless \
+    openjdk-21-jdk-headless \
+    openjdk-21-jre-headless \
     gradle \
     maven && \
     rm -rf /var/lib/apt/lists/*

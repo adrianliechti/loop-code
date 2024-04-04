@@ -11,7 +11,7 @@ RUN apt update && apt-get install -y --no-install-recommends \
     pkg-config && \
     rm -rf /var/lib/apt/lists/*
 
-ENV GO_VERSION=1.21.4
+ENV GO_VERSION=1.22.2
 ENV GOPATH=$HOME/go
 
 RUN arch=$(uname -m) && \

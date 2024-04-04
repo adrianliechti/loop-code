@@ -26,7 +26,7 @@ ENV PATH=$PATH:/usr/local/go/bin:$HOME/go/bin
 
 USER 1000
 
-# https://github.com/golang/vscode-go/blob/master/tools/allTools.ts.in
+# https://github.com/golang/vscode-go/blob/master/extension/tools/allTools.ts.in
 RUN go install -v github.com/fatih/gomodifytags@latest && \
     go install -v github.com/haya14busa/goplay/cmd/goplay@latest && \
     go install -v github.com/josharian/impl@latest && \
@@ -39,6 +39,7 @@ RUN go install -v github.com/fatih/gomodifytags@latest && \
     go install -v github.com/mgechev/revive@latest && \
     go install -v golang.org/x/tools/gopls@latest && \
     go install -v github.com/go-delve/delve/cmd/dlv@latest && \
+    go install -v github.com/golang/vscode-go/vscgo@latest && \
     sudo rm -rf $HOME/.cache $GOPATH/src $GOPATH/pkg
 
 RUN /opt/code/bin/openvscode-server --install-extension golang.Go

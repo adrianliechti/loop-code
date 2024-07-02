@@ -14,23 +14,14 @@ tasks:
 
   push-stacks:
     cmds:
-      - task: push-stack
-        vars: { STACK: "dotnet" }
-      - task: push-stack
-        vars: { STACK: "golang" }
-      - task: push-stack
-        vars: { STACK: "java" }
+      - docker buildx build --push --platform linux/arm64,linux/amd64 --tag {{.DOCKER_IMAGE}}:dotnet stacks/dotnet/ -f stacks/dotnet/Dockerfile
+      - docker buildx build --push --platform linux/arm64,linux/amd64 --tag {{.DOCKER_IMAGE}}:dotnet-dind stacks/dotnet/ -f stacks/dotnet/Dockerfile --build-arg CODE_IMAGE=ghcr.io/adrianliechti/loop-code:dind
 
-  run-stack:
-    cmds:
-      - docker run -i --rm --pull=always -p 3000:3000 {{.DOCKER_IMAGE}}:{{.STACK}}
+      - docker buildx build --push --platform linux/arm64,linux/amd64 --tag {{.DOCKER_IMAGE}}:golang stacks/golang/ -f stacks/golang/Dockerfile
+      - docker buildx build --push --platform linux/arm64,linux/amd64 --tag {{.DOCKER_IMAGE}}:golang-dind stacks/golang/ -f stacks/golang/Dockerfile --build-arg CODE_IMAGE=ghcr.io/adrianliechti/loop-code:dind
 
-  push-stack:
-    deps:
-      - push
-    cmds:
-      - docker buildx build --push --platform linux/arm64,linux/amd64 --tag {{.DOCKER_IMAGE}}:{{.STACK}} stacks/{{.STACK}}/ -f stacks/{{.STACK}}/Dockerfile
-      - docker buildx build --push --platform linux/arm64,linux/amd64 --tag {{.DOCKER_IMAGE}}:{{.STACK}}-dind stacks/{{.STACK}}/ -f stacks/{{.STACK}}/Dockerfile --build-arg CODE_IMAGE=adrianliechti/loop-code:dind
+      - docker buildx build --push --platform linux/arm64,linux/amd64 --tag {{.DOCKER_IMAGE}}:java stacks/java/ -f stacks/java/Dockerfile
+      - docker buildx build --push --platform linux/arm64,linux/amd64 --tag {{.DOCKER_IMAGE}}:java-dind stacks/java/ -f stacks/java/Dockerfile --build-arg CODE_IMAGE=ghcr.io/adrianliechti/loop-code:dind
 
   run:
     cmds:

@@ -2,22 +2,19 @@
 
 ## Available Images
 
-Pre-Configured Images
-
-* adrianliechti/loop-code:dotnet
-* adrianliechti/loop-code:golang
-* adrianliechti/loop-code:java
-
-Docker-in-Docker Images
-
-* adrianliechti/loop-code:dotnet-dind
-* adrianliechti/loop-code:golang-dind
-* adrianliechti/loop-code:java-dind
-
 Base Images
 
-* adrianliechti/loop-code
-* adrianliechti/loop-code:dind
+* ghcr.io/adrianliechti/loop-code
+* ghcr.io/adrianliechti/loop-code:dind
+
+Pre-Configured Images
+
+* ghcr.io/adrianliechti/loop-code:golang
+* ghcr.io/adrianliechti/loop-code:golang-dind
+* ghcr.io/adrianliechti/loop-code:java
+* ghcr.io/adrianliechti/loop-code:java-dind
+* ghcr.io/adrianliechti/loop-code:dotnet
+* ghcr.io/adrianliechti/loop-code:dotnet-dind
 
 
 ## Run locally (Example)

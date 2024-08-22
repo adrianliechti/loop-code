@@ -40,7 +40,7 @@ spec:
       serviceAccountName: code
       containers:
         - name: code
-          image: adrianliechti/loop-code
+          image: ghcr.io/adrianliechti/loop-code
           imagePullPolicy: Always
           securityContext:
             runAsUser: 1000

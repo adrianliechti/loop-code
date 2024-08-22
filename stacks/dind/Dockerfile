@@ -1,4 +1,5 @@
-FROM adrianliechti/loop-code
+ARG BASE_IMAGE=ghcr.io/adrianliechti/loop-code
+FROM ${BASE_IMAGE}
 
 USER root
 
@@ -26,4 +27,4 @@ COPY docker-entrypoint.sh /docker-entrypoint.sh
 USER 1000
 
 ENTRYPOINT [ "/docker-entrypoint.sh" ]
-CMD [ "/bin/sh", "-c", "exec /opt/code/bin/openvscode-server --host 0.0.0.0 --without-connection-token" ]
+CMD ["code", "serve-web", "--host", "0.0.0.0", "--port", "3000", "--without-connection-token", "--accept-server-license-terms" ]

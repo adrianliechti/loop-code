@@ -9,19 +9,22 @@ tasks:
   push:
     run: once
     cmds:
-      - docker buildx build --push --platform linux/arm64,linux/amd64 --tag {{.DOCKER_IMAGE}} .
+      - docker buildx build --push --platform linux/arm64,linux/amd64 --tag {{.DOCKER_IMAGE}} stacks/base/ -f stacks/base/Dockerfile
       - docker buildx build --push --platform linux/arm64,linux/amd64 --tag {{.DOCKER_IMAGE}}:dind stacks/dind/ -f stacks/dind/Dockerfile
 
   push-stacks:
     cmds:
-      - docker buildx build --push --platform linux/arm64,linux/amd64 --tag {{.DOCKER_IMAGE}}:dotnet stacks/dotnet/ -f stacks/dotnet/Dockerfile
-      - docker buildx build --push --platform linux/arm64,linux/amd64 --tag {{.DOCKER_IMAGE}}:dotnet-dind stacks/dotnet/ -f stacks/dotnet/Dockerfile --build-arg CODE_IMAGE=ghcr.io/adrianliechti/loop-code:dind
+      - docker buildx build --push --platform linux/arm64,linux/amd64 --tag {{.DOCKER_IMAGE}}:dotnet stacks/base/ -f stacks/base/Dockerfile --build-arg BASE_IMAGE=mcr.microsoft.com/devcontainers/dotnet
+      - docker buildx build --push --platform linux/arm64,linux/amd64 --tag {{.DOCKER_IMAGE}}:dotnet-dind stacks/dind/ -f stacks/dind/Dockerfile --build-arg BASE_IMAGE={{.DOCKER_IMAGE}}:dotnet
 
-      - docker buildx build --push --platform linux/arm64,linux/amd64 --tag {{.DOCKER_IMAGE}}:golang stacks/golang/ -f stacks/golang/Dockerfile
-      - docker buildx build --push --platform linux/arm64,linux/amd64 --tag {{.DOCKER_IMAGE}}:golang-dind stacks/golang/ -f stacks/golang/Dockerfile --build-arg CODE_IMAGE=ghcr.io/adrianliechti/loop-code:dind
+      - docker buildx build --push --platform linux/arm64,linux/amd64 --tag {{.DOCKER_IMAGE}}:golang stacks/base/ -f stacks/base/Dockerfile --build-arg BASE_IMAGE=mcr.microsoft.com/devcontainers/go
+      - docker buildx build --push --platform linux/arm64,linux/amd64 --tag {{.DOCKER_IMAGE}}:golang-dind stacks/dind/ -f stacks/dind/Dockerfile --build-arg BASE_IMAGE={{.DOCKER_IMAGE}}:golang
 
-      - docker buildx build --push --platform linux/arm64,linux/amd64 --tag {{.DOCKER_IMAGE}}:java stacks/java/ -f stacks/java/Dockerfile
-      - docker buildx build --push --platform linux/arm64,linux/amd64 --tag {{.DOCKER_IMAGE}}:java-dind stacks/java/ -f stacks/java/Dockerfile --build-arg CODE_IMAGE=ghcr.io/adrianliechti/loop-code:dind
+      - docker buildx build --push --platform linux/arm64,linux/amd64 --tag {{.DOCKER_IMAGE}}:java stacks/base/ -f stacks/base/Dockerfile --build-arg BASE_IMAGE=mcr.microsoft.com/devcontainers/java
+      - docker buildx build --push --platform linux/arm64,linux/amd64 --tag {{.DOCKER_IMAGE}}:java-dind stacks/dind/ -f stacks/dind/Dockerfile --build-arg BASE_IMAGE={{.DOCKER_IMAGE}}:java
+
+      - docker buildx build --push --platform linux/arm64,linux/amd64 --tag {{.DOCKER_IMAGE}}:python stacks/base/ -f stacks/base/Dockerfile --build-arg BASE_IMAGE=mcr.microsoft.com/devcontainers/python
+      - docker buildx build --push --platform linux/arm64,linux/amd64 --tag {{.DOCKER_IMAGE}}:python-dind stacks/dind/ -f stacks/dind/Dockerfile --build-arg BASE_IMAGE={{.DOCKER_IMAGE}}:python
 
   run:
     cmds:

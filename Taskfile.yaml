@@ -28,9 +28,10 @@ tasks:
 
   run:
     cmds:
-      - docker build --tag {{.DOCKER_IMAGE}} .
-      - docker build --tag {{.DOCKER_IMAGE}}:dind stacks/dind/ -f stacks/dind/Dockerfile
-      - docker run -it --privileged --rm -p 3000:3000 {{.DOCKER_IMAGE}}:dind
+      - docker build --tag {{.DOCKER_IMAGE}} stacks/base/ -f stacks/base/Dockerfile
+      - docker run -it {{.DOCKER_IMAGE}} /bin/bash
+      #- docker build --tag {{.DOCKER_IMAGE}}:dind stacks/dind/ -f stacks/dind/Dockerfile
+      #- docker run -it --privileged --rm -p 3000:3000 {{.DOCKER_IMAGE}}:dind
 
   install:
     cmds:

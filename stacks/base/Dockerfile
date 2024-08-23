@@ -11,6 +11,15 @@ RUN arch=$(uname -m) && \
     tar -xzf vscode_cli.tar.gz -C /usr/local/bin && \
     rm vscode_cli.tar.gz
 
+RUN commit=$(/usr/local/bin/code --version | grep -oP '(?<=commit )\w+') && \
+    arch=$(uname -m) && \
+    if [ "${arch}" = "x86_64" ]; then \
+    arch="x64"; \
+    elif [ "${arch}" = "aarch64" ]; then \
+    arch="arm64"; \
+    fi && \
+    curl -Lo vscode_server.tar.gz "https://update.code.visualstudio.com/commit:${commit}/server-linux-${arch}/stable"
+
 # Docker CLI
 ENV DOCKER_VERSION="27.1.2"
 RUN curl -fsSL "https://download.docker.com/linux/static/stable/$(uname -m)/docker-${DOCKER_VERSION}.tgz" | tar -zxf - --strip=1 -C /usr/local/bin/ docker/docker

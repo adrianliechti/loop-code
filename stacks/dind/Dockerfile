@@ -27,4 +27,4 @@ COPY docker-entrypoint.sh /docker-entrypoint.sh
 USER 1000
 
 ENTRYPOINT [ "/docker-entrypoint.sh" ]
-CMD ["code", "serve-web", "--host", "0.0.0.0", "--port", "3000", "--without-connection-token", "--accept-server-license-terms" ]
+CMD [ "/bin/sh", "-c", "exec ${OPENVSCODE_SERVER_ROOT}/bin/openvscode-server --host 0.0.0.0 --without-connection-token \"${@}\"", "--" ]

@@ -9,32 +9,33 @@ tasks:
   push:
     run: once
     cmds:
-      - docker buildx build --push --platform linux/arm64,linux/amd64 --tag {{.DOCKER_IMAGE}} stacks/base/ -f stacks/base/Dockerfile
+      - docker buildx build --push --platform linux/arm64,linux/amd64 --tag {{.DOCKER_IMAGE}} stacks/base/ -f stacks/base/Dockerfile --build-arg VSCODE_EXTENSIONS="redhat.vscode-xml redhat.vscode-yaml"
       - docker buildx build --push --platform linux/arm64,linux/amd64 --tag {{.DOCKER_IMAGE}}:dind stacks/dind/ -f stacks/dind/Dockerfile
 
   push-stacks:
     cmds:
-      - docker buildx build --push --platform linux/arm64,linux/amd64 --tag {{.DOCKER_IMAGE}}:dotnet stacks/base/ -f stacks/base/Dockerfile --build-arg BASE_IMAGE=mcr.microsoft.com/devcontainers/dotnet
+      - docker buildx build --push --platform linux/arm64,linux/amd64 --tag {{.DOCKER_IMAGE}}:dotnet stacks/base/ -f stacks/base/Dockerfile --build-arg BASE_IMAGE=mcr.microsoft.com/devcontainers/dotnet --build-arg VSCODE_EXTENSIONS="redhat.vscode-xml redhat.vscode-yaml muhammad-sammy.csharp"
       - docker buildx build --push --platform linux/arm64,linux/amd64 --tag {{.DOCKER_IMAGE}}:dotnet-dind stacks/dind/ -f stacks/dind/Dockerfile --build-arg BASE_IMAGE={{.DOCKER_IMAGE}}:dotnet
 
-      - docker buildx build --push --platform linux/arm64,linux/amd64 --tag {{.DOCKER_IMAGE}}:golang stacks/base/ -f stacks/base/Dockerfile --build-arg BASE_IMAGE=mcr.microsoft.com/devcontainers/go
+      - docker buildx build --push --platform linux/arm64,linux/amd64 --tag {{.DOCKER_IMAGE}}:golang stacks/base/ -f stacks/base/Dockerfile --build-arg BASE_IMAGE=mcr.microsoft.com/devcontainers/go --build-arg VSCODE_EXTENSIONS="redhat.vscode-xml redhat.vscode-yaml golang.Go"
       - docker buildx build --push --platform linux/arm64,linux/amd64 --tag {{.DOCKER_IMAGE}}:golang-dind stacks/dind/ -f stacks/dind/Dockerfile --build-arg BASE_IMAGE={{.DOCKER_IMAGE}}:golang
 
-      - docker buildx build --push --platform linux/arm64,linux/amd64 --tag {{.DOCKER_IMAGE}}:java stacks/base/ -f stacks/base/Dockerfile --build-arg BASE_IMAGE=mcr.microsoft.com/devcontainers/java
+      - docker buildx build --push --platform linux/arm64,linux/amd64 --tag {{.DOCKER_IMAGE}}:java stacks/base/ -f stacks/base/Dockerfile --build-arg BASE_IMAGE=mcr.microsoft.com/devcontainers/java --build-arg VSCODE_EXTENSIONS="redhat.vscode-xml redhat.vscode-yaml redhat.java vscjava.vscode-java-debug"
       - docker buildx build --push --platform linux/arm64,linux/amd64 --tag {{.DOCKER_IMAGE}}:java-dind stacks/dind/ -f stacks/dind/Dockerfile --build-arg BASE_IMAGE={{.DOCKER_IMAGE}}:java
 
-      - docker buildx build --push --platform linux/arm64,linux/amd64 --tag {{.DOCKER_IMAGE}}:python stacks/base/ -f stacks/base/Dockerfile --build-arg BASE_IMAGE=mcr.microsoft.com/devcontainers/python
+      - docker buildx build --push --platform linux/arm64,linux/amd64 --tag {{.DOCKER_IMAGE}}:python stacks/base/ -f stacks/base/Dockerfile --build-arg BASE_IMAGE=mcr.microsoft.com/devcontainers/python --build-arg VSCODE_EXTENSIONS="redhat.vscode-xml redhat.vscode-yaml ms-python.python ms-python.debugpy"
       - docker buildx build --push --platform linux/arm64,linux/amd64 --tag {{.DOCKER_IMAGE}}:python-dind stacks/dind/ -f stacks/dind/Dockerfile --build-arg BASE_IMAGE={{.DOCKER_IMAGE}}:python
+  
+  push-special:
+    cmds:
+      -  docker buildx build --push --platform linux/arm64,linux/amd64 --tag {{.DOCKER_IMAGE}}:azure stacks/azure/ -f stacks/azure/Dockerfile
 
   run:
     cmds:
-      - docker build --tag {{.DOCKER_IMAGE}} stacks/base/ -f stacks/base/Dockerfile
-      - docker run -it --privileged --rm -p 3000:3000 {{.DOCKER_IMAGE}}
+      - docker run -it --rm -p 3000:3000 {{.DOCKER_IMAGE}}
   
   run-dind:
     cmds:
-      - docker build --tag {{.DOCKER_IMAGE}} stacks/base/ -f stacks/base/Dockerfile
-      - docker build --tag {{.DOCKER_IMAGE}}:dind stacks/dind/ -f stacks/dind/Dockerfile
       - docker run -it --privileged --rm -p 3000:3000 {{.DOCKER_IMAGE}}:dind
 
   install:

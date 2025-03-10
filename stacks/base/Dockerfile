@@ -1,9 +1,11 @@
 ARG BASE_IMAGE=mcr.microsoft.com/devcontainers/base:debian
 FROM ${BASE_IMAGE}
 
-ARG RELEASE_TAG=openvscode-server-v1.96.0
 ARG RELEASE_ORG=gitpod-io
+ARG RELEASE_TAG=openvscode-server-v1.97.2
 ARG OPENVSCODE_SERVER_ROOT="/home/.openvscode-server"
+
+ARG VSCODE_EXTENSIONS=""
 
 ARG USER_UID=1000
 ARG USER_GID=1000
@@ -30,11 +32,11 @@ RUN chown -R $1000:$1000 ${OPENVSCODE_SERVER_ROOT}
 
 
 # Docker CLI
-ENV DOCKER_VERSION="27.5.0"
+ENV DOCKER_VERSION="27.5.1"
 RUN curl -fsSL "https://download.docker.com/linux/static/stable/$(uname -m)/docker-${DOCKER_VERSION}.tgz" | tar -zxf - --strip=1 -C /usr/local/bin/ docker/docker
 
 # Kubenetes CLI
-ENV KUBECTL_VERSION="1.32.0"
+ENV KUBECTL_VERSION="1.32.2"
 RUN arch=$(uname -m) && \
     if [ "${arch}" = "x86_64" ]; then \
     arch="amd64"; \
@@ -45,7 +47,7 @@ RUN arch=$(uname -m) && \
     chmod +x /usr/local/bin/kubectl
 
 # Helm CLI
-ENV HELM_VERSION="3.16.4"
+ENV HELM_VERSION="3.17.1"
 RUN arch=$(uname -m) && \
     if [ "${arch}" = "x86_64" ]; then \
     arch="amd64"; \
@@ -76,6 +78,13 @@ ENV LANG=C.UTF-8 \
     GIT_EDITOR="code --wait" \
     OPENVSCODE_SERVER_ROOT=${OPENVSCODE_SERVER_ROOT} \
     PATH=${PATH}:${OPENVSCODE_SERVER_ROOT}/bin
+
+RUN \
+    if [ -n "${VSCODE_EXTENSIONS}" ]; then \
+        for extension in $(echo "${VSCODE_EXTENSIONS}"); do \
+            ${OPENVSCODE_SERVER_ROOT}/bin/openvscode-server --install-extension "${extension}"; \
+        done \
+    fi
 
 EXPOSE 3000
 

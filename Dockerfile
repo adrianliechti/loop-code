@@ -2,7 +2,7 @@ ARG BASE_IMAGE=mcr.microsoft.com/devcontainers/base:debian
 FROM ${BASE_IMAGE}
 
 ARG RELEASE_ORG=gitpod-io
-ARG RELEASE_TAG=openvscode-server-v1.97.2
+ARG RELEASE_TAG=openvscode-server-v1.106.3
 ARG OPENVSCODE_SERVER_ROOT="/home/.openvscode-server"
 
 ARG VSCODE_EXTENSIONS=""
@@ -32,11 +32,11 @@ RUN chown -R $1000:$1000 ${OPENVSCODE_SERVER_ROOT}
 
 
 # Docker CLI
-ENV DOCKER_VERSION="27.5.1"
+ENV DOCKER_VERSION="29.1.2"
 RUN curl -fsSL "https://download.docker.com/linux/static/stable/$(uname -m)/docker-${DOCKER_VERSION}.tgz" | tar -zxf - --strip=1 -C /usr/local/bin/ docker/docker
 
 # Kubenetes CLI
-ENV KUBECTL_VERSION="1.32.2"
+ENV KUBECTL_VERSION="1.34.2"
 RUN arch=$(uname -m) && \
     if [ "${arch}" = "x86_64" ]; then \
     arch="amd64"; \
@@ -47,7 +47,7 @@ RUN arch=$(uname -m) && \
     chmod +x /usr/local/bin/kubectl
 
 # Helm CLI
-ENV HELM_VERSION="3.17.1"
+ENV HELM_VERSION="4.0.1"
 RUN arch=$(uname -m) && \
     if [ "${arch}" = "x86_64" ]; then \
     arch="amd64"; \
